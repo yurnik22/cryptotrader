@@ -1,0 +1,57 @@
+poll_interval: "1.0"
+
+database:
+  host: localhost
+  port: 3306
+  user: cryptotrader
+  password: cryptotrader
+  name: cryptotrader
+
+paper: true
+exchange: mock
+
+symbols:
+  - BTC
+  - ETH
+
+risk:
+  min_order_usd: "1"
+
+execution:
+  fee_rate: "0"
+
+mock_exchange:
+  price_noise_bps: "5"
+  volumes:
+    BTC: "1200.5"
+    ETH: "8500.0"
+  prices:
+    BTC: "50000"
+    ETH: "3000"
+
+# Per-bot persistent allocation (DB) and strategy-specific config (JSON in bots.config_json)
+bots:
+  - name: aggressive
+    strategy: aggressive
+    allocated_capital: "30"
+    config:
+      symbol: BTC
+      aggressive_buy_fraction: "0.12"
+      min_order_usd: "5"
+
+  - name: passive
+    strategy: passive
+    allocated_capital: "30"
+    config:
+      symbol: ETH
+      passive_cycle_modulo: 11
+      passive_quote_size_usd: "4"
+
+  - name: smart
+    strategy: smart
+    allocated_capital: "30"
+    config:
+      symbol: BTC
+      reference_price: "48000"
+      mean_revert_band_bps: "30"
+      smart_order_usd: "10"
