@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Protocol, Sequence, Self
+from typing import Any, Protocol, Self
 
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -212,9 +213,7 @@ class SqlAlchemyPositionRepository:
         await session.flush()
         return row
 
-    async def delete_position(
-        self, session: AsyncSession, bot_id: int, symbol: str
-    ) -> None:
+    async def delete_position(self, session: AsyncSession, bot_id: int, symbol: str) -> None:
         await session.execute(
             delete(Position).where(Position.bot_id == bot_id, Position.symbol == symbol)
         )

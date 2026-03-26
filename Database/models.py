@@ -7,11 +7,11 @@ from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     DateTime,
     ForeignKey,
     Integer,
-    JSON,
     Numeric,
     String,
     Text,
@@ -128,9 +128,7 @@ class Trade(Base):
     )
 
     bot: Mapped[Bot] = relationship("Bot", back_populates="trades")
-    market_data: Mapped[MarketData | None] = relationship(
-        "MarketData", back_populates="trades"
-    )
+    market_data: Mapped[MarketData | None] = relationship("MarketData", back_populates="trades")
 
 
 class MarketData(Base):

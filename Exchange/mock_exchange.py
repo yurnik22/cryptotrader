@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -37,7 +37,7 @@ class MockExchange:
         return signed * (self._noise_bps / Decimal("10000"))
 
     async def get_market_snapshot(self, symbols: list[str]) -> MarketSnapshot:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         quotes: dict[str, MarketQuote] = {}
         for sym in symbols:
             key = sym.upper()

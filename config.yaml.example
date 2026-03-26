@@ -1,0 +1,84 @@
+# =============================================================================
+# Cryptotrader — copy to `config.yaml` and adjust (config.yaml is gitignored).
+# Override any value with environment variables (see Utils/config_loader.py).
+# =============================================================================
+
+# Seconds between trading cycles (string Decimal, e.g. "1.0")
+poll_interval: "1.0"
+
+database:
+  # Defaults can be overridden with CRYPTOTRADER_DB_* env vars
+  host: localhost
+  port: 3306
+  user: your_mysql_user
+  password: your_mysql_password
+  name: cryptotrader
+
+# Paper vs live intent (used for logging / future execution paths)
+paper: true
+
+# Exchange backend: "mock" (paper quotes) or "revolut" (see revolut section)
+exchange: mock
+
+symbols:
+  - BTC
+  - ETH
+
+# Risk limits — all monetary strings are Decimal-compatible
+risk:
+  min_order_usd: "1"
+  # Max fraction of mark-to-market equity in a single symbol (0–1)
+  max_position_notional_fraction: "0.5"
+  # Block new risk-on trades if drawdown from peak equity exceeds this fraction
+  max_drawdown_fraction: "0.25"
+  # Block new risk-on trades if loss from session-start equity exceeds this fraction
+  daily_loss_limit_fraction: "0.1"
+  # After this many consecutive risk rejections, pause bot until pause_cycles elapse
+  circuit_breaker_reject_streak: "5"
+  circuit_breaker_pause_cycles: "10"
+
+execution:
+  fee_rate: "0"
+
+mock_exchange:
+  price_noise_bps: "5"
+  volumes:
+    BTC: "1200.5"
+    ETH: "8500.0"
+  prices:
+    BTC: "50000"
+    ETH: "3000"
+
+# Revolut X — used when exchange: revolut
+revolut:
+  # When true, returns synthetic snapshots (no HTTP). Set false when wiring real API.
+  use_stub: true
+  api_base: "https://example.revolut.com" # replace with real base URL when available
+  # Optional: set via CRYPTOTRADER_REVOLUT_API_KEY in .env for live calls later
+
+# Bots seeded on first run (allocated_capital persisted in DB)
+bots:
+  - name: aggressive
+    strategy: aggressive
+    allocated_capital: "30"
+    config:
+      symbol: BTC
+      aggressive_buy_fraction: "0.12"
+      min_order_usd: "5"
+
+  - name: passive
+    strategy: passive
+    allocated_capital: "30"
+    config:
+      symbol: ETH
+      passive_cycle_modulo: 11
+      passive_quote_size_usd: "4"
+
+  - name: smart
+    strategy: smart
+    allocated_capital: "30"
+    config:
+      symbol: BTC
+      reference_price: "48000"
+      mean_revert_band_bps: "30"
+      smart_order_usd: "10"

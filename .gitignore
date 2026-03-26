@@ -1,0 +1,57 @@
+# Bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment & secrets (never commit real credentials)
+.env
+.env.*
+!.env.example
+
+# Local config (copy from config.yaml.example)
+config.yaml
+config.local.yaml
+
+# Databases & logs
+*.db
+*.sqlite3
+*.log
+logs/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.hypothesis/
+
+# uv / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Cursor / tooling (optional local)
+.cursor/
