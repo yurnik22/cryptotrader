@@ -1,6 +1,6 @@
 # Web/api/portfolio.py
 from fastapi import APIRouter, Depends
-from Database import get_portfolio_for_user
+from Database.portfolio import get_portfolio_for_user
 from Web.auth import get_current_user
 
 router = APIRouter()

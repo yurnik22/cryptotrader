@@ -1,33 +1,26 @@
-import React, { useEffect, useState } from "react";
+// src/App.jsx
+import { useEffect } from "react";
+import Sidebar from "./components/Sidebar";
+import Dashboard from "./components/Dashboard";
+import useSocket from "./useSocket";
+import { useStore } from "./store";
 
 export default function App() {
-  const [portfolio, setPortfolio] = useState({});
+  // Zustand: функции для обновления состояния
+  const setState = useStore((state) => state.setState);
+  const setWsStatus = useStore((state) => state.setWsStatus);
 
-  useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8000/ws/portfolio");
-    ws.onmessage = (e) => setPortfolio(JSON.parse(e.data));
-    return () => ws.close();
-  }, []);
-
-  const pauseBuying = async () => {
-    await fetch("http://localhost:8000/api/pause_buying", { method: "POST" });
-  };
-
-  const resumeBuying = async () => {
-    await fetch("http://localhost:8000/api/resume_buying", { method: "POST" });
-  };
+  // Инициализация WebSocket через кастомный хук
+  useSocket(
+    (data) => setState(data),       // callback для обновления портфеля / ботов / трейдов
+    (status) => setWsStatus(status) // callback для статуса WS
+  );
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Live Portfolio</h2>
-      <ul>
-        {Object.entries(portfolio).map(([k,v]) => (
-          <li key={k}>{k}: {v}</li>
-        ))}
-      </ul>
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={pauseBuying} style={{ marginRight: "10px" }}>Pause Buying</button>
-        <button onClick={resumeBuying}>Resume Buying</button>
+    <div className="layout" style={{ display: "flex", height: "100vh" }}>
+      <Sidebar />
+      <div className="content" style={{ flex: 1, padding: "20px" }}>
+        <Dashboard />
       </div>
     </div>
   );

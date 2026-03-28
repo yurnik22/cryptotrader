@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+}
+
+.layout {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background: #020617;
+  padding: 20px;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.card {
+  background: #111827;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.danger {
+  background: #dc2626;
+  color: white;
+}

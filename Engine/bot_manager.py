@@ -1,20 +1,37 @@
-"""Maps persisted strategy keys to `BaseBot` implementations (plug-in registry)."""
+# Engine/bot_manager.py
 
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, ClassVar
-
-from Engine.bots.aggressive_bot import AggressiveBot
 from Engine.bots.base_bot import BaseBot
+from Engine.bots.aggressive_bot import AggressiveBot
 from Engine.bots.passive_bot import PassiveBot
 from Engine.bots.smart_bot import SmartBot
 
 if TYPE_CHECKING:
     from Database.models import Bot as BotRow
 
+# --- Глобальный флаг покупки ---
+_ALLOW_BUYING: bool = True
 
+def pause_all_buying() -> None:
+    """Остановить все покупки для всех ботов"""
+    global _ALLOW_BUYING
+    _ALLOW_BUYING = False
+    print("All buying paused!")
+
+def resume_all_buying() -> None:
+    """Возобновить покупки для всех ботов"""
+    global _ALLOW_BUYING
+    _ALLOW_BUYING = True
+    print("All buying resumed!")
+
+def is_buying_allowed() -> bool:
+    """Проверка, разрешены ли покупки"""
+    return _ALLOW_BUYING
+
+# --- StrategyRegistry ---
 class StrategyRegistry:
-    """Central registry for strategy name → bot class. Extend via `register`."""
+    """Central registry for strategy name → bot class."""
 
     _map: ClassVar[dict[str, type[BaseBot]]] = {
         "aggressive": AggressiveBot,
