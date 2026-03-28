@@ -21,6 +21,7 @@ async def broadcast(data: dict):
     for ws in clients:
         try:
             await ws.send_text(json.dumps(data))
+            print(data)
         except:
             dead.append(ws)
 

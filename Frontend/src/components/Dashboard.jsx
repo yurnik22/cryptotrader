@@ -5,9 +5,13 @@ import { useStore } from "../store";
 import BotsCard from "./BotsCard";
 
 export default function Dashboard() {
-  //const bots = useStore((state) => state.bots);
-  const bots='bot';
+  const state = useStore();
 
+  console.log("STORE:", state);
+
+
+  const bots = useStore((state) => state.bots);
+  
   return (
     <>
       <PortfolioCard />

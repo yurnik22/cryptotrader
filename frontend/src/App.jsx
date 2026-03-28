@@ -11,9 +11,18 @@ export default function App() {
   const setWsStatus = useStore((state) => state.setWsStatus);
 
   // Инициализация WebSocket через кастомный хук
+  //useSocket(
+  //  (data) => setState(data),       // callback для обновления портфеля / ботов / трейдов
+  //  (status) => setWsStatus(status) // callback для статуса WS
+  //);
+
   useSocket(
-    (data) => setState(data),       // callback для обновления портфеля / ботов / трейдов
-    (status) => setWsStatus(status) // callback для статуса WS
+    (data) => {
+      console.log("APP RECEIVED:", data);
+      setState(data);
+
+      },
+    (status) => setWsStatus(status)
   );
 
   return (

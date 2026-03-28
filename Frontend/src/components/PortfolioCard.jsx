@@ -3,8 +3,8 @@ import { useStore } from "../store";
 import { useEffect, useState } from "react";
 
 export default function PortfolioCard() {
-  //const portfolio = useStore((state) => state.portfolio);
-  const portfolio = {'value':1000};
+  const portfolio = useStore((state) => state.portfolio);
+  
   const [history, setHistory] = useState([]);
 
   useEffect(() => {

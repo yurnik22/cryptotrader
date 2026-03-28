@@ -20,6 +20,7 @@ export default function useSocket(onMessage, onStatus) {
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          //console.log("WS DATA:", data);
           onMessage(data);
         } catch (err) {
           console.error("Invalid WS message", err);

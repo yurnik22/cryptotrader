@@ -5,7 +5,13 @@ export const useStore = create((set) => ({
   bots: [],
   trades: [],
   wsStatus: "DISCONNECTED",
+
   setWsStatus: (status) => set({ wsStatus: status }),
-  setState: (data) => set(data),
-  addTrade: (trade) => set((state) => ({ trades: [trade, ...state.trades] }))
+
+  setState: (data) =>
+    set((state) => ({
+      portfolio: data.portfolio ?? state.portfolio,
+      bots: Array.isArray(data.bots) ? data.bots : state.bots,
+      trades: Array.isArray(data.trades) ? data.trades : state.trades,
+    })),
 }));
