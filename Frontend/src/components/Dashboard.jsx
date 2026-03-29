@@ -7,7 +7,7 @@ import BotsCard from "./BotsCard";
 export default function Dashboard() {
   const state = useStore();
 
-  console.log("STORE:", state);
+  //console.log("STORE:", state);
 
 
   const bots = useStore((state) => state.bots);

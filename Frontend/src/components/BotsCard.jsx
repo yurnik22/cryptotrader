@@ -1,5 +1,5 @@
 export default function BotsCard({ bots }) {
-  console.log("BOTS =", bots, typeof bots);
+  //console.log("BOTS =", bots, typeof bots);
 
   if (!Array.isArray(bots)) {
     return (
@@ -9,7 +9,7 @@ export default function BotsCard({ bots }) {
       </div>
     );
   }
-  
+
   return (
     <div className="card">
       <h3>Bots</h3>

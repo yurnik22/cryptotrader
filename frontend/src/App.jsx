@@ -18,7 +18,7 @@ export default function App() {
 
   useSocket(
     (data) => {
-      console.log("APP RECEIVED:", data);
+      //console.log("APP RECEIVED:", data);
       setState(data);
 
       },
