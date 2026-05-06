@@ -64,6 +64,11 @@ def get_tickers_fetcher(provider: str):
     return ExchangeFactory.get_function(provider, "get_tickers")
 
 
+def get_balance_fetcher(provider: str):
+    """Возвращает функцию получения балансов провайдера."""
+    return ExchangeFactory.get_function(provider, "get_balances")
+
+
 # Универсальная функция (если понадобится)
 def get_exchange_function(provider: str, func_name: str) -> Callable:
     """Универсальный доступ к любой функции биржи"""

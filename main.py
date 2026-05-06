@@ -6,9 +6,15 @@ from config import load_config, setup_logging
 from Database.session import get_session_factory, close_database
 from Database.database import init_database
 from Database.repositories import Repositories
+from Engine.sync_scheduler import ensure_default_sync_tasks, run_pending_sync_tasks
+from Engine.trading_cycle import TradingCycle
 from Engine.symbol_sync_service import SymbolSyncService
 from Engine.pair_sync_service import PairSyncService
+from Engine.ticker_sync_service import TickerSyncService
 #from Engine.bot import TradingBot
+
+
+SCHEDULER_SLEEP_SECONDS = 30
 
 
 async def main():
@@ -56,48 +62,40 @@ async def main():
             #refresh_interval=timedelta(hours=24),   # можно изменить
         )
 
-        # 8. ЗАПУСКАЕМ СИНХРОНИЗАЦИЮ ДО БОТА ===
-        logging.info("→ Запускаем синхронизацию торговых символов...")
-        try:
-            symbols = await symbol_sync.refresh_if_needed(force=True)   # force=True при старте
-            logging.info(f"✓ Синхронизация символов завершена. Всего символов: {len(symbols)}")
-            if symbols:
-                logging.info(f"Первые 10 символов: {symbols[:10]}")
-        except Exception:
-            logging.exception("✗ Критическая ошибка при синхронизации символов")
-            await close_database()
-            return
-
-        logging.info("→ Запускаем синхронизацию торговых пар...")
-        try:
-            pairs = await pair_sync.refresh_if_needed(force=True)   # force=True при старте
-            logging.info(f"✓ Синхронизация пар завершена. Всего пар: {len(pairs)}")
-            if pairs:
-                logging.info(f"Первые 10 пар: {pairs[:10]}")
-        except Exception:
-            logging.exception("✗ Критическая ошибка при синхронизации пар")
-            await close_database()
-            return
-
-
-        # 5. Создаём главный бот
-        '''bot = TradingBot(
+        ticker_sync = TickerSyncService(
             config=config,
             session_factory=session_factory,
             repos=repos,
-        )'''
+        )
 
-        # 6. Запускаем бота
-        '''print("🚀 Запуск TradingBot...")
+        trading_cycle = TradingCycle(
+            config=config,
+            session_factory=session_factory,
+            repos=repos,
+        )
+
+        # 8. Инициализируем дефолтные задачи и запускаем scheduler
+        await ensure_default_sync_tasks(repos)
+
+        handlers = {
+            "sync_symbols": lambda: symbol_sync.refresh_if_needed(force=True),
+            "sync_pairs": lambda: pair_sync.refresh_if_needed(force=True),
+            "sync_tickers": lambda: ticker_sync.refresh_if_needed(force=True),
+        }
+
+        logging.info("Планировщик синхронизации запущен")
+        trading_task = asyncio.create_task(trading_cycle.run(), name="trading_cycle")
+
         try:
-            await bot.run()
-        except KeyboardInterrupt:
-            print("\n⛔ Бот остановлен пользователем")
-        except Exception as e:
-            logging.exception("Критическая ошибка при работе бота")
+            while True:
+                await run_pending_sync_tasks(repos, handlers)
+                await asyncio.sleep(SCHEDULER_SLEEP_SECONDS)
+        except asyncio.CancelledError:
+            logging.info("Получен сигнал остановки, завершаем scheduler...")
         finally:
-            # Можно добавить graceful shutdown здесь
-            print("👋 Завершение работы")'''
+            trading_task.cancel()
+            await asyncio.gather(trading_task, return_exceptions=True)
+
             
     finally:
         # Корректное завершение
@@ -107,4 +105,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logging.info("Программа остановлена пользователем")
